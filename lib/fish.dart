@@ -17,10 +17,10 @@ class Fish {
 class FishManager {
 
   List<Fish> fishList = new List();
+  Random rng  = new Random();
 
   FishManager() {
     for (var i = 0; i < 10; i++) {
-      var rng = new Random();
       int size = rng.nextInt(4) + 1;
       var tmpRect = Offset(
           rng.nextBool() ? rng.nextInt(180).toDouble() : rng.nextInt(180) *
@@ -44,6 +44,7 @@ class FishManager {
             fishList[i].rect = fishList[i].rect.shift(getOffsetDirection(fishList[i]));
           }
           isOverlaps();
+          outBoundary();
         }
     );
   }
@@ -71,6 +72,26 @@ class FishManager {
         ((fishList[i].size >= fishList[j].size) || (!fishList[j].isPredator & (fishList[i].size + 1 >= fishList[j].size)) )){
           fishList.removeAt(j);
         }
+      }
+    }
+  }
+  void outBoundary(){
+    for (int i = 0; i < fishList.length; i++){
+      if(fishList[i].rect.center.dx > 180) {
+        fishList[i].rect.shift(Offset(-10.0, 0.0));
+        fishList[i].direction = rng.nextInt(3);
+      }
+      else if(fishList[i].rect.center.dx < -180) {
+        fishList[i].rect.shift(Offset(10.0, 0.0));
+        fishList[i].direction = rng.nextInt(3);
+      }
+      else if(fishList[i].rect.center.dy > 300) {
+        fishList[i].rect.shift(Offset(0.0, -10.0));
+        fishList[i].direction = rng.nextInt(3);
+      }
+      else if(fishList[i].rect.center.dy < -300) {
+        fishList[i].rect.shift(Offset(0.0, 10.0));
+        fishList[i].direction = rng.nextInt(3);
       }
     }
   }
@@ -110,8 +131,6 @@ class FishPainter extends CustomPainter{
 
   @override
   void paint(Canvas canvas, Size size) {
-    print("paint");
-
     List list = manager.getFishList;
     for (var i = 0; i < list.length; i++) {
       if (list[i].isPredator){
@@ -126,9 +145,6 @@ class FishPainter extends CustomPainter{
 
   @override
   bool shouldRepaint(FishPainter oldDelegate) {
-    // TODO: implement shouldRepaint
-    print("repaint");
-    //manager.move(manager.getFishList.first);
     return true;
   }
 
