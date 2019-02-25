@@ -8,17 +8,10 @@ class Fish {
   bool isPredator;
   int size;
   int speed;
+  int direction;
 
-  Fish(this.rect, this.isPredator, this.size){
+  Fish(this.rect, this.isPredator, this.size, this.direction){
     this.speed = 6 - this.size;
-  }
-  Stream<Rect> _move() async*{
-    yield* Stream.periodic(
-        Duration(seconds: 1),
-            (int a){
-          this.rect = this.rect.shift(Offset(2.0, 0.0));
-        }
-    );
   }
 }
 
@@ -36,11 +29,38 @@ class FishManager {
           rng.nextBool() ? rng.nextInt(250).toDouble() : rng.nextInt(250) *
               (-1.0))
       & Size(20.0 * size, 10.0 * size);
-      fishList.add(new Fish(tmpRect, false, size));
+      int direction = rng.nextInt(3);
+      fishList.add(new Fish(tmpRect, false, size, direction));
     }
   }
   List get getFishList {
     return fishList;
+  }
+
+  Stream<Rect> _move() async*{
+    yield* Stream.periodic(
+        Duration(seconds: 1),
+            (int a){
+          for(int i = 0; i < fishList.length; i++){
+            fishList[i].rect = fishList[i].rect.shift(getOffsetDirection(fishList[i]));
+          }
+        }
+    );
+  }
+
+  Offset getOffsetDirection(Fish fish){
+    switch(fish.direction){
+      case 0:
+        return Offset(2.0 * fish.speed, 0.0);
+      case 1:
+        return Offset(-2.0 * fish.speed, 0.0);
+      case 2:
+        return Offset(0.0, 2.0 * fish.speed);
+      case 3:
+        return Offset(0.0, -2.0 * fish.speed);
+      default:
+        return null;
+    }
   }
 }
 
@@ -51,7 +71,7 @@ class MovingFish extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: manager.getFishList.first._move(),
+      stream: manager._move(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Center(
           child: CustomPaint(
