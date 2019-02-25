@@ -12,6 +12,14 @@ class Fish {
   Fish(this.rect, this.isPredator, this.size){
     this.speed = 6 - this.size;
   }
+  Stream<Rect> _move() async*{
+    yield* Stream.periodic(
+        Duration(seconds: 1),
+            (int a){
+          this.rect = this.rect.shift(Offset(2.0, 0.0));
+        }
+    );
+  }
 }
 
 class FishManager {
@@ -37,39 +45,35 @@ class FishManager {
 }
 
 class MovingFish extends StatelessWidget{
+
+  final FishManager manager = new FishManager();
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: _move(Offset(0.0, 0.0) & Size(60.0, 30.0)),
+      stream: manager.getFishList.first._move(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Center(
-          child: Text(
-              snapshot.data.bottomCenter.toString()
+          child: CustomPaint(
+            painter: FishPainter(manager),
           )
         );
       },
     );
   }
 }
-Stream<Rect> _move(Rect rect) async*{
-  yield* Stream.periodic(
-      Duration(seconds: 1),
-          (int a){
-        return rect.shift(Offset(a.toDouble(), 0.0));
-      }
-  );
-}
+
 
 class FishPainter extends CustomPainter{
   Paint _paint;
   FishManager manager;
 
-  FishPainter() {
+  FishPainter(FishManager fishManager) {
     _paint = Paint()
       ..color = Colors.black
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 5.0;
-    manager = new FishManager();
+    manager = fishManager;
   }
 
   @override
