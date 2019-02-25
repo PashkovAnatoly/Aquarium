@@ -25,9 +25,7 @@ class AquariumAppPage extends StatelessWidget {
       ),
       backgroundColor: Colors.cyan,
       body: Center(
-        child: CustomPaint(
-          painter: FishPainter(),
-        ),
+        child: MovingFish()
       )
       );
   }
