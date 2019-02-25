@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
-import 'dart:io';
 
 class Fish {
   Rect rect;
@@ -30,7 +29,7 @@ class FishManager {
               (-1.0))
       & Size(20.0 * size, 10.0 * size);
       int direction = rng.nextInt(3);
-      fishList.add(new Fish(tmpRect, false, size, direction));
+      fishList.add(new Fish(tmpRect, rng.nextBool(), size, direction));
     }
   }
   List get getFishList {
@@ -39,11 +38,12 @@ class FishManager {
 
   Stream<Rect> _move() async*{
     yield* Stream.periodic(
-        Duration(seconds: 1),
+        Duration(milliseconds: 100),
             (int a){
           for(int i = 0; i < fishList.length; i++){
             fishList[i].rect = fishList[i].rect.shift(getOffsetDirection(fishList[i]));
           }
+          isOverlaps();
         }
     );
   }
@@ -60,6 +60,18 @@ class FishManager {
         return Offset(0.0, -2.0 * fish.speed);
       default:
         return null;
+    }
+  }
+  void isOverlaps(){
+
+    for (int i = 0; i < fishList.length; i++){
+      for (int j = 0; j < fishList.length; j++){
+        if(i == j) continue;
+        if(fishList[i].rect.overlaps(fishList[j].rect) & fishList[i].isPredator &
+        ((fishList[i].size >= fishList[j].size) || (!fishList[j].isPredator & (fishList[i].size + 1 >= fishList[j].size)) )){
+          fishList.removeAt(j);
+        }
+      }
     }
   }
 }
@@ -102,7 +114,13 @@ class FishPainter extends CustomPainter{
 
     List list = manager.getFishList;
     for (var i = 0; i < list.length; i++) {
-      canvas.drawRect(list[i].rect, _paint);
+      if (list[i].isPredator){
+        _paint.color = Colors.red;
+        canvas.drawRect(list[i].rect, _paint);
+      }else {
+        _paint.color = Colors.green;
+        canvas.drawRect(list[i].rect, _paint);
+      }
     }
   }
 
