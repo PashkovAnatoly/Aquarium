@@ -28,7 +28,7 @@ class FishManager {
           rng.nextBool() ? rng.nextInt(250).toDouble() : rng.nextInt(250) *
               (-1.0))
       & Size(20.0 * size, 10.0 * size);
-      int direction = rng.nextInt(3);
+      int direction = rng.nextInt(7);
       fishList.add(new Fish(tmpRect, rng.nextBool(), size, direction));
     }
   }
@@ -59,6 +59,14 @@ class FishManager {
         return Offset(0.0, 2.0 * fish.speed);
       case 3:
         return Offset(0.0, -2.0 * fish.speed);
+      case 4:
+        return Offset(1.41 * fish.speed, 1.41 * fish.speed);
+      case 5:
+        return Offset(1.41 * fish.speed, -1.41 * fish.speed);
+      case 6:
+        return Offset(-1.41 * fish.speed, -1.41 * fish.speed);
+      case 7:
+        return Offset(-1.41 * fish.speed, 1.41 * fish.speed);
       default:
         return null;
     }
@@ -78,20 +86,20 @@ class FishManager {
   void outBoundary(){
     for (int i = 0; i < fishList.length; i++){
       if(fishList[i].rect.center.dx > 180) {
-        fishList[i].rect.shift(Offset(-10.0, 0.0));
-        fishList[i].direction = rng.nextInt(3);
+        fishList[i].rect = fishList[i].rect.shift(Offset(-10.0, 0.0));
+        fishList[i].direction = rng.nextInt(7);
       }
       else if(fishList[i].rect.center.dx < -180) {
-        fishList[i].rect.shift(Offset(10.0, 0.0));
-        fishList[i].direction = rng.nextInt(3);
+        fishList[i].rect = fishList[i].rect.shift(Offset(10.0, 0.0));
+        fishList[i].direction = rng.nextInt(7);
       }
       else if(fishList[i].rect.center.dy > 300) {
-        fishList[i].rect.shift(Offset(0.0, -10.0));
-        fishList[i].direction = rng.nextInt(3);
+        fishList[i].rect = fishList[i].rect.shift(Offset(0.0, -10.0));
+        fishList[i].direction = rng.nextInt(7);
       }
       else if(fishList[i].rect.center.dy < -300) {
-        fishList[i].rect.shift(Offset(0.0, 10.0));
-        fishList[i].direction = rng.nextInt(3);
+        fishList[i].rect = fishList[i].rect.shift(Offset(0.0, 10.0));
+        fishList[i].direction = rng.nextInt(7);
       }
     }
   }
@@ -106,6 +114,8 @@ class MovingFish extends StatelessWidget{
     return StreamBuilder(
       stream: manager._move(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
+        print(MediaQuery.of(context).size.width);
+        print(MediaQuery.of(context).size.height);
         return Center(
           child: CustomPaint(
             painter: FishPainter(manager),
