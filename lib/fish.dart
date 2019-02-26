@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
+import 'dart:io';
 
 class Fish {
-  Rect rect;
-  bool isPredator;
   int size;
-  int speed;
+  Rect rect;
   int direction;
+  bool isPredator;
+  int speed;
 
-  Fish(this.rect, this.isPredator, this.size, this.direction){
+
+  Random rng = new Random();
+
+  Fish(){
+    this.size = rng.nextInt(4) + 1;
+    this.rect = Offset(
+        rng.nextBool() ? rng.nextInt(180).toDouble() : rng.nextInt(180) *
+            (-1.0),
+        rng.nextBool() ? rng.nextInt(250).toDouble() : rng.nextInt(250) *
+            (-1.0))
+    & Size(20.0 * size, 10.0 * size);
+    this.direction = rng.nextInt(7);
+    this.isPredator = rng.nextBool();
     this.speed = 6 - this.size;
   }
 }
@@ -21,22 +34,14 @@ class FishManager {
 
   FishManager() {
     for (var i = 0; i < 10; i++) {
-      int size = rng.nextInt(4) + 1;
-      var tmpRect = Offset(
-          rng.nextBool() ? rng.nextInt(180).toDouble() : rng.nextInt(180) *
-              (-1.0),
-          rng.nextBool() ? rng.nextInt(250).toDouble() : rng.nextInt(250) *
-              (-1.0))
-      & Size(20.0 * size, 10.0 * size);
-      int direction = rng.nextInt(7);
-      fishList.add(new Fish(tmpRect, rng.nextBool(), size, direction));
+      fishList.add(new Fish());
     }
   }
   List get getFishList {
     return fishList;
   }
 
-  Stream<Rect> _move() async*{
+  Stream<Rect> _move(int maxWidth, int maxHeight) async*{
     yield* Stream.periodic(
         Duration(milliseconds: 100),
             (int a){
@@ -44,7 +49,7 @@ class FishManager {
             fishList[i].rect = fishList[i].rect.shift(getOffsetDirection(fishList[i]));
           }
           isOverlaps();
-          outBoundary();
+          outBoundary(maxWidth, maxHeight);
         }
     );
   }
@@ -83,26 +88,27 @@ class FishManager {
       }
     }
   }
-  void outBoundary(){
+  void outBoundary(int maxWidthOffset, int maxHeightOffset){
     for (int i = 0; i < fishList.length; i++){
-      if(fishList[i].rect.center.dx > 180) {
+      if(fishList[i].rect.centerRight.dx > maxWidthOffset) {
         fishList[i].rect = fishList[i].rect.shift(Offset(-10.0, 0.0));
         fishList[i].direction = rng.nextInt(7);
       }
-      else if(fishList[i].rect.center.dx < -180) {
+      else if(fishList[i].rect.centerLeft.dx < -maxWidthOffset) {
         fishList[i].rect = fishList[i].rect.shift(Offset(10.0, 0.0));
         fishList[i].direction = rng.nextInt(7);
       }
-      else if(fishList[i].rect.center.dy > 300) {
+      else if(fishList[i].rect.topCenter.dy > maxHeightOffset - 70) {
         fishList[i].rect = fishList[i].rect.shift(Offset(0.0, -10.0));
         fishList[i].direction = rng.nextInt(7);
       }
-      else if(fishList[i].rect.center.dy < -300) {
+      else if(fishList[i].rect.bottomCenter.dy < -maxHeightOffset + 50) {
         fishList[i].rect = fishList[i].rect.shift(Offset(0.0, 10.0));
         fishList[i].direction = rng.nextInt(7);
       }
     }
   }
+
 }
 
 class MovingFish extends StatelessWidget{
@@ -112,10 +118,8 @@ class MovingFish extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: manager._move(),
+      stream: manager._move(MediaQuery.of(context).size.width.toInt() ~/2, MediaQuery.of(context).size.height ~/2),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        print(MediaQuery.of(context).size.width);
-        print(MediaQuery.of(context).size.height);
         return Center(
           child: CustomPaint(
             painter: FishPainter(manager),
