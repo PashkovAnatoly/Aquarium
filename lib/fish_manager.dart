@@ -74,11 +74,11 @@ class FishManager {
         fishList[i].rect = fishList[i].rect.shift(Offset(10.0, 0.0));
         fishList[i].direction = rng.nextInt(7);
       }
-      else if(fishList[i].rect.topCenter.dy > maxHeightOffset - 50) {
+      else if(fishList[i].rect.topCenter.dy > maxHeightOffset - 30) {
         fishList[i].rect = fishList[i].rect.shift(Offset(0.0, -10.0));
         fishList[i].direction = rng.nextInt(7);
       }
-      else if(fishList[i].rect.bottomCenter.dy < -maxHeightOffset + 20) {
+      else if(fishList[i].rect.bottomCenter.dy < -maxHeightOffset + 50) {
         fishList[i].rect = fishList[i].rect.shift(Offset(0.0, 10.0));
         fishList[i].direction = rng.nextInt(7);
       }
