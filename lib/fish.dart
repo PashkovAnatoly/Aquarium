@@ -76,7 +76,7 @@ class FishManager {
         return null;
     }
   }
-  void isOverlaps(){
+  void isOverlaps() async{
 
     for (int i = 0; i < fishList.length; i++){
       for (int j = 0; j < fishList.length; j++){
@@ -84,6 +84,8 @@ class FishManager {
         if(fishList[i].rect.overlaps(fishList[j].rect) & fishList[i].isPredator &
         ((fishList[i].size >= fishList[j].size) || (!fishList[j].isPredator & (fishList[i].size + 1 >= fishList[j].size)) )){
           fishList.removeAt(j);
+          Future<Fish> future = new Future.delayed(const Duration(minutes: 1), () => new Fish());
+          future.then((Fish value) => fishList.add(value)).catchError((e) => 777);
         }
       }
     }
@@ -108,7 +110,6 @@ class FishManager {
       }
     }
   }
-
 }
 
 class MovingFish extends StatelessWidget{
