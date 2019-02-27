@@ -18,7 +18,7 @@ class FishManager {
 
   Stream<Rect> moveFish(int maxWidth, int maxHeight) async*{
     yield* Stream.periodic(
-        Duration(milliseconds: 100),
+        Duration(milliseconds: 50),
             (int a){
           for(int i = 0; i < fishList.length; i++){
             fishList[i].rect = fishList[i].rect.shift(getDirection(fishList[i]));
@@ -32,21 +32,21 @@ class FishManager {
   Offset getDirection(Fish fish){
     switch(fish.direction){
       case 0:
-        return Offset(2.0 * fish.speed, 0.0);
+        return Offset(1.0 * fish.speed, 0.0);
       case 1:
-        return Offset(-2.0 * fish.speed, 0.0);
+        return Offset(-1.0 * fish.speed, 0.0);
       case 2:
-        return Offset(0.0, 2.0 * fish.speed);
+        return Offset(0.0, 1.0 * fish.speed);
       case 3:
-        return Offset(0.0, -2.0 * fish.speed);
+        return Offset(0.0, -1.0 * fish.speed);
       case 4:
-        return Offset(1.41 * fish.speed, 1.41 * fish.speed);
+        return Offset(0.7 * fish.speed, 0.7 * fish.speed);
       case 5:
-        return Offset(1.41 * fish.speed, -1.41 * fish.speed);
+        return Offset(0.7 * fish.speed, -0.7 * fish.speed);
       case 6:
-        return Offset(-1.41 * fish.speed, -1.41 * fish.speed);
+        return Offset(-0.7 * fish.speed, -0.7 * fish.speed);
       case 7:
-        return Offset(-1.41 * fish.speed, 1.41 * fish.speed);
+        return Offset(-0.7 * fish.speed, 0.7 * fish.speed);
       default:
         throw new Exception(["getDirection(Fish fish): Illegal fish direction"]);
     }
