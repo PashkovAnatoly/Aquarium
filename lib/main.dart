@@ -20,9 +20,9 @@ class AquariumAppPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Aquarium"),
-      ),
+//      appBar: AppBar(
+//        title: Text("Aquarium"),
+//      ),
       backgroundColor: Colors.cyan,
       body: Center(
         child: MovingFish()

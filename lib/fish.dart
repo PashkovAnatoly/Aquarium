@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
-import 'dart:io';
 
 class Fish {
   int size;
@@ -100,11 +99,11 @@ class FishManager {
         fishList[i].rect = fishList[i].rect.shift(Offset(10.0, 0.0));
         fishList[i].direction = rng.nextInt(7);
       }
-      else if(fishList[i].rect.topCenter.dy > maxHeightOffset - 70) {
+      else if(fishList[i].rect.topCenter.dy > maxHeightOffset) {
         fishList[i].rect = fishList[i].rect.shift(Offset(0.0, -10.0));
         fishList[i].direction = rng.nextInt(7);
       }
-      else if(fishList[i].rect.bottomCenter.dy < -maxHeightOffset + 50) {
+      else if(fishList[i].rect.bottomCenter.dy < -maxHeightOffset) {
         fishList[i].rect = fishList[i].rect.shift(Offset(0.0, 10.0));
         fishList[i].direction = rng.nextInt(7);
       }
@@ -119,7 +118,7 @@ class MovingFish extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: manager._move(MediaQuery.of(context).size.width.toInt() ~/2, MediaQuery.of(context).size.height ~/2),
+      stream: manager._move(MediaQuery.of(context).size.width.toInt() ~/2, MediaQuery.of(context).size.height.toInt() ~/2),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Center(
           child: CustomPaint(
@@ -138,7 +137,6 @@ class FishPainter extends CustomPainter{
 
   FishPainter(FishManager fishManager) {
     _paint = Paint()
-      ..color = Colors.black
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 5.0;
     manager = fishManager;
