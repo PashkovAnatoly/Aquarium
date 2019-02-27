@@ -52,7 +52,6 @@ class FishManager {
     }
   }
   void checkOverlaps() async{
-
     for (int i = 0; i < fishList.length; i++){
       for (int j = 0; j < fishList.length; j++){
         if(i == j) continue;
@@ -75,11 +74,11 @@ class FishManager {
         fishList[i].rect = fishList[i].rect.shift(Offset(10.0, 0.0));
         fishList[i].direction = rng.nextInt(7);
       }
-      else if(fishList[i].rect.topCenter.dy > maxHeightOffset) {
+      else if(fishList[i].rect.topCenter.dy > maxHeightOffset - 50) {
         fishList[i].rect = fishList[i].rect.shift(Offset(0.0, -10.0));
         fishList[i].direction = rng.nextInt(7);
       }
-      else if(fishList[i].rect.bottomCenter.dy < -maxHeightOffset) {
+      else if(fishList[i].rect.bottomCenter.dy < -maxHeightOffset + 20) {
         fishList[i].rect = fishList[i].rect.shift(Offset(0.0, 10.0));
         fishList[i].direction = rng.nextInt(7);
       }
